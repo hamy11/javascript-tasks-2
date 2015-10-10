@@ -63,8 +63,9 @@ module.exports.remove = function remove(query) {
 module.exports.importFromCsv = function importFromCsv(filename) {
     var data = require('fs').readFileSync(filename, 'utf-8');
     var records = data.split('\n');
-    var params=[];console.log("\nИмпорт:");
-    for (var i=0;i<records.length;i++){
+    var params = [];
+    console.log("\nИмпорт:");
+    for (var i = 0;i < records.length;i++){
         params = records[i].split(';');
         if (isValidName(params[0]) && isValidPhone(params[1]) &&  isValidMail(params[2])){
             console.log('Запись ' + params + ' добавлена.');
@@ -73,8 +74,8 @@ module.exports.importFromCsv = function importFromCsv(filename) {
                 phone: params[1],
                 email: params[2]
             };
+        phoneBook.push(record);    
         }
-        phoneBook.push(record);
     }
 };
 
@@ -97,7 +98,7 @@ function getCell(word) {
     var cell = '';
     var lengthOfCell = 28;
     var countOfHyphens =  (lengthOfCell - word.length-1) /2;
-    for (var i=0; i<countOfHyphens; i++){
+    for (var i = 0; i < countOfHyphens; i++){
         cell += '-';
     }
     cell+=word;
@@ -105,7 +106,7 @@ function getCell(word) {
         cell += '-';
     }
     if (cell.length<lengthOfCell){
-        cell+= '-';
+        cell += '-';
     }
     return cell;
 }
