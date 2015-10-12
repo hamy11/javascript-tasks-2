@@ -9,6 +9,7 @@ var phoneBook = []; // Здесь вы храните записи как хот
 
 module.exports.add = function add(name, phone, email) {
     if (isValidPhone(phone) && isValidName(name) &&  isValidMail(email)){
+        console.log(name + " " + phone + " " + email + " Добавлено");
         var record = {
             name: name,
             phone: phone,
@@ -19,7 +20,7 @@ module.exports.add = function add(name, phone, email) {
 };
 
 function isValidMail(email) {
-    return /^[0-9a-zA-Z]+([0-9a-zA-Z]*[-._+])*[0-9a-zA-Z]+@[0-9a-zA-Z]+([-.][0-9a-zA-Z]+)*([0-9a-zA-Z]*[.])[a-zA-Z]{2,6}$/.test(email);
+    return /^[0-9a-zA-Z]+([0-9a-zA-Z]*[-._+])*[0-9a-zA-Z]+@[0-9a-zA-ZА-Яа-я]+([-.][0-9a-zA-ZА-Яа-я]+)*([0-9a-zA-ZА-Яа-я]*[.])[a-zA-ZА-Яа-я]{2,6}$/.test(email);
 };
 
 function isValidName(name){
@@ -27,20 +28,19 @@ function isValidName(name){
 };
 
 function isValidPhone(phone){
-    return /^(((\d{1,3})|(\+\d{1,3}))[\- ]?)?(\(\d{3}\)[\- ]?)?[\d\- ]{7,11}$/.test(phone);//((\+7|8)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d \-]{7,9}
+    return /^(((\d{1,3})|(\+\d{1,3}))[\- ]?)?(\(\d{3}\)[\- ]?)?[\d\- ]{10,13}$/.test(phone);//((\+7|8)[\- ]?)?(\(?\d{3}\)?[\- ]?)?[\d \-]{7,9}
 };
 
 /*
-   Функция поиска записи в телефонную книгу.
+   Функция поиска записи в телефонной книге.
    Поиск ведется по всем полям.
 */
 module.exports.find = function find(query) {
+    console.log("\nПоиск по запросу " + query +" :");
     phoneBook.forEach(function(element, index, array){
-        //var name = element.name;
         if (element.name.indexOf(query) > -1 || element.phone.indexOf(query) > -1 || element.email.indexOf(query) > -1 ){
             console.log(element.name + ", " + element.phone + ", " + element.email);
         }
-
     });
 };
 /*
@@ -53,8 +53,9 @@ module.exports.remove = function remove(query) {
             array.slice(index, 1);
             count++;
         }
+
     });
-    console.log("Контактов удалено:" + count);
+    console.log("\nКонтактов удалено: " + count);
 };
 
 /*
@@ -65,7 +66,7 @@ module.exports.importFromCsv = function importFromCsv(filename) {
     var records = data.split('\n');
     var params = [];
     console.log("\nИмпорт:");
-    for (var i = 0;i < records.length;i++){
+    for (var i=0;i<records.length;i++){
         params = records[i].split(';');
         if (isValidName(params[0]) && isValidPhone(params[1]) &&  isValidMail(params[2])){
             console.log('Запись ' + params + ' добавлена.');
@@ -74,19 +75,21 @@ module.exports.importFromCsv = function importFromCsv(filename) {
                 phone: params[1],
                 email: params[2]
             };
-        phoneBook.push(record);    
         }
+        phoneBook.push(record);
     }
 };
 
 /*
    Функция вывода всех телефонов в виде ASCII (задача со звёздочкой!).
 */
-module.exports.showTable = function showTable() {
-    console.log("\nТАБЛИЦА:");
-    var params = [];
+module.exports.showTable = function showTable(filename) {
+    console.log("\nТаблица:")
+    var header              = "%:::::::::::::Имя::::::::::::||:::::::::::Номер::::::::::::||:::::Электронная-почта::::::%";
     var horisontalSeparator = "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";//90
     var verticalSeparator = "%";
+    console.log(horisontalSeparator);
+    console.log(header);
     console.log(horisontalSeparator);
     phoneBook.forEach(function(element, index, array){
         console.log(verticalSeparator+getCell(element.name) + '||' +getCell(element.phone.replace(/[^0-9^\+]/gi, '')) + '||' + getCell(element.email) + verticalSeparator);
@@ -98,7 +101,7 @@ function getCell(word) {
     var cell = '';
     var lengthOfCell = 28;
     var countOfHyphens =  (lengthOfCell - word.length-1) /2;
-    for (var i = 0; i < countOfHyphens; i++){
+    for (var i=0; i<countOfHyphens; i++){
         cell += '-';
     }
     cell+=word;
@@ -106,7 +109,7 @@ function getCell(word) {
         cell += '-';
     }
     if (cell.length<lengthOfCell){
-        cell += '-';
+        cell+= '-';
     }
     return cell;
 }
