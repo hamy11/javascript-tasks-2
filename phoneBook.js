@@ -36,7 +36,7 @@ function isValidPhone(phone){
    Поиск ведется по всем полям.
 */
 module.exports.find = function find(query) {
-    console.log("\nПоиск по запросу " + query +" :");
+    console.log("\nПоиск по запросу " + query + " :");
     phoneBook.forEach(function(element, index, array){
         if (element.name.indexOf(query) > -1 || element.phone.indexOf(query) > -1 || element.email.indexOf(query) > -1 ){
             console.log(element.name + ", " + element.phone + ", " + element.email);
@@ -85,14 +85,15 @@ module.exports.importFromCsv = function importFromCsv(filename) {
 */
 module.exports.showTable = function showTable(filename) {
     console.log("\nТаблица:")
-    var header              = "%:::::::::::::Имя::::::::::::||:::::::::::Номер::::::::::::||:::::Электронная-почта::::::%";
+    var header = "%:::::::::::::Имя::::::::::::||:::::::::::Номер::::::::::::||:::::Электронная-почта::::::%";
     var horisontalSeparator = "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";//90
     var verticalSeparator = "%";
     console.log(horisontalSeparator);
     console.log(header);
     console.log(horisontalSeparator);
     phoneBook.forEach(function(element, index, array){
-        console.log(verticalSeparator+getCell(element.name) + '||' +getCell(element.phone.replace(/[^0-9^\+]/gi, '')) + '||' + getCell(element.email) + verticalSeparator);
+        getNiceNumber(element.phone.replace(/[^0-9]/gi, ''));
+        console.log(verticalSeparator+getCell(element.name) + '||' +getCell(getNiceNumber(element.phone.replace(/[^0-9]/gi, ''))) + '||' + getCell(element.email) + verticalSeparator);
         console.log(horisontalSeparator);
     });
 };
@@ -100,16 +101,53 @@ module.exports.showTable = function showTable(filename) {
 function getCell(word) {
     var cell = '';
     var lengthOfCell = 28;
-    var countOfHyphens =  (lengthOfCell - word.length-1) /2;
-    for (var i=0; i<countOfHyphens; i++){
+    var countOfHyphens = (lengthOfCell - word.length - 1) / 2;
+    for (var i=0; i < countOfHyphens; i++){
         cell += '-';
     }
     cell+=word;
-    for (var i=0; i<countOfHyphens; i++){
+    for (var i=0; i < countOfHyphens; i++){
         cell += '-';
     }
-    if (cell.length<lengthOfCell){
-        cell+= '-';
+    if (cell.length < lengthOfCell){
+        cell += '-';
     }
     return cell;
+}
+function getNiceNumber(number){
+    var i = number.length % 10;
+    var niceNumber = '+';
+    for(var j=0; j < number.length;j++){
+        /*if( j==i) { //Что же лучше? свич или ifы?
+            niceNumber += '(';
+        }
+        if(j==i+3){
+            niceNumber += ')';
+        }
+        if (j==i+6){
+            niceNumber += '-';
+        }
+        if (j==i+8){
+            niceNumber += '-';
+        }
+        niceNumber+=number[j];*/
+
+        switch (j) {
+            case i:
+                niceNumber += '('+ number[j];
+                break;
+            case i+3:
+                niceNumber += ')' + number[j];
+                break;
+            case i+6:
+                niceNumber += '-' + number[j];
+                break;
+            case i+8:
+                niceNumber += '-' + number[j];
+                break;
+            default:
+                niceNumber += number[j];
+        }
+    }
+    return niceNumber;
 }
